@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 
 	"github.com/imdario/mergo"
+	"github.com/paulhammond/msg/internal/tmpl"
 )
 
 type templateSet struct {
@@ -14,7 +15,9 @@ type templateSet struct {
 }
 
 func newTemplateSet() templateSet {
-	return templateSet{template.New("")}
+	set := templateSet{template.New("")}
+	set.Funcs(tmpl.Map())
+	return set
 }
 
 func (t *templateSet) Parse(path, fsPath string) error {
