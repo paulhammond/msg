@@ -8,12 +8,18 @@ import (
 	"path/filepath"
 )
 
+var version string = "dev"
+
 // Run runs msg according to the config file at configPath and saves the output
 // in outputDir
 func Run(configPath, outputDir string) error {
 	cfg, err := parseConfig(configPath, outputDir)
 	if err != nil {
 		return err
+	}
+
+	if cfg.Version != version {
+		return fmt.Errorf("site requires msg version %q, have %q", cfg.Version, version)
 	}
 
 	tree, err := newTree(cfg)

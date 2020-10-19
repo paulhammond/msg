@@ -10,6 +10,7 @@ import (
 
 // Config represents a parsed config file
 type Config struct {
+	Version   string     `yaml:"msg_version"`
 	Root      string     `yaml:"root"`
 	Templates []string   `yaml:"templates"`
 	Pages     []string   `yaml:"pages"`
