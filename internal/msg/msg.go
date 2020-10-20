@@ -33,15 +33,18 @@ func Run(configPath, outputDir string) error {
 
 // renderAll renders the site
 func renderAll(cfg Config, tree *Tree) error {
+	pages, err := makePageVars(cfg, tree)
+	if err != nil {
+		return err
+	}
 	for path := range tree.pages {
 
 		fsPath := cfg.output + "/" + rewritePath(cfg, path)
 		fmt.Printf("rendering %s\n", fsPath)
-		rendered, err := render(cfg, tree, path)
+		rendered, err := render(tree, pages, path)
 		if err != nil {
 			return err
 		}
-		fmt.Println(fsPath, filepath.Dir(fsPath))
 		err = os.MkdirAll(filepath.Dir(fsPath), 0755)
 		if err != nil {
 			return err

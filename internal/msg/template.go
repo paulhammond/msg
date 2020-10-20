@@ -35,40 +35,54 @@ func (t *templateSet) Parse(path, fsPath string) error {
 	return nil
 }
 
-// Variables represents the data available to templates
-type Variables struct {
-	Site *Tree
-	Page *Page
+type tmplv map[string]interface{}
+
+func makePageVars(cfg Config, tree *Tree) (map[string]tmplv, error) {
+
+	var pages = make(map[string]tmplv, len(tree.pages))
+	for path, page := range tree.pages {
+
+		m := make(Metadata, len(page.Metadata))
+		for k, v := range page.Metadata {
+			m[k] = v
+		}
+		err := mergo.Merge(&m, cfg.Defaults)
+		if err != nil {
+			return nil, err
+		}
+
+		m["contents"] = template.HTML(page.Rendered)
+		m["source"] = page.Source
+		pages[path] = tmplv(m)
+	}
+
+	return pages, nil
 }
 
-func render(cfg Config, tree *Tree, path string) ([]byte, error) {
+func render(tree *Tree, pages map[string]tmplv, path string) ([]byte, error) {
 
-	p, ok := tree.pages[path]
-
-	m := make(Metadata, len(p.Metadata))
-	for k, v := range p.Metadata {
-		m[k] = v
-	}
-	err := mergo.Merge(&m, cfg.Defaults)
-	if err != nil {
-		return nil, err
-	}
-
+	page, ok := pages[path]
 	if !ok {
 		return nil, errors.New("not found")
 	}
 
-	vars := Variables{
-		Site: tree,
-		Page: &Page{
-			Metadata: m,
-			Rendered: p.Rendered,
-			Source:   p.Source,
+	vars := tmplv{
+		"site": tmplv{
+			"pages": pages,
 		},
+		"page": page,
+	}
+
+	var templateName string
+	switch t := page["template"].(type) {
+	case string:
+		templateName = t
+	default:
+		return nil, errors.New("no template defined")
 	}
 
 	var buf bytes.Buffer
-	err = tree.templates.ExecuteTemplate(&buf, m.string("template"), vars)
+	err := tree.templates.ExecuteTemplate(&buf, templateName, vars)
 
 	return buf.Bytes(), err
 }
