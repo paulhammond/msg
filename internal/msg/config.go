@@ -10,15 +10,16 @@ import (
 
 // Config represents a parsed config file
 type Config struct {
-	Version   string     `yaml:"msg_version"`
-	Root      string     `yaml:"root"`
-	Templates []string   `yaml:"templates"`
-	Pages     []string   `yaml:"pages"`
-	Ignore    []string   `yaml:"ignore"`
-	Rewrites  []*Rewrite `yaml:"rewrites"`
-	Defaults  Metadata   `yaml:"defaults"`
-	output    string
-	cfgPath   string
+	Version      string     `yaml:"msg_version"`
+	Root         string     `yaml:"root"`
+	Templates    []string   `yaml:"templates"`
+	Pages        []string   `yaml:"pages"`
+	Ignore       []string   `yaml:"ignore"`
+	FileRewrites []*Rewrite `yaml:"file_rewrites"`
+	URLRewrites  []*Rewrite `yaml:"url_rewrites"`
+	Defaults     Metadata   `yaml:"defaults"`
+	output       string
+	cfgPath      string
 }
 
 // ParseConfig parses the config file at cfgPath into a Config struct
@@ -57,11 +58,13 @@ func parseConfig(cfgPath string, output string) (Config, error) {
 	}
 
 	// lastly compile rewrites
-	for _, r := range cfg.Rewrites {
-		err = r.parse()
-		if err != nil {
-			return cfg, err
-		}
+	err = compileRewrites(cfg.FileRewrites)
+	if err != nil {
+		return cfg, err
+	}
+	err = compileRewrites(cfg.URLRewrites)
+	if err != nil {
+		return cfg, err
 	}
 
 	return cfg, err

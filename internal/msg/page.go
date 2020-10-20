@@ -11,14 +11,17 @@ import (
 
 // Page represents a single page
 type Page struct {
-	Metadata Metadata
-	Rendered string
-	Source   string
+	Metadata   Metadata
+	Rendered   string
+	Source     string
+	SourcePath string
+	OutputPath string
+	Path       string
 }
 
 // parsePage parses the file at path into a page struct
-func parsePage(path string) (*Page, error) {
-	source, err := ioutil.ReadFile(path)
+func parsePage(path, fspath string, cfg Config) (*Page, error) {
+	source, err := ioutil.ReadFile(fspath)
 	if err != nil {
 		return nil, err
 	}
@@ -36,10 +39,14 @@ func parsePage(path string) (*Page, error) {
 	}
 	metadata := meta.Get(context)
 
+	outputPath := rewritePath(cfg.FileRewrites, path)
 	return &Page{
-		Metadata: metadata,
-		Rendered: buf.String(),
-		Source:   string(source),
+		Metadata:   metadata,
+		Rendered:   buf.String(),
+		Source:     string(source),
+		SourcePath: path,
+		OutputPath: outputPath,
+		Path:       rewritePath(cfg.URLRewrites, outputPath),
 	}, nil
 
 }

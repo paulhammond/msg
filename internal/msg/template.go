@@ -53,6 +53,7 @@ func makePageVars(cfg Config, tree *Tree) (map[string]tmplv, error) {
 
 		m["contents"] = template.HTML(page.Rendered)
 		m["source"] = page.Source
+		m["path"] = page.Path
 		pages[path] = tmplv(m)
 	}
 

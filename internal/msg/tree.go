@@ -12,7 +12,7 @@ import (
 type Tree struct {
 	pages     map[string]*Page
 	templates templateSet
-	assets    []string
+	assets    map[string]string
 }
 
 // newTree parses all files referenced in cfg and creates a Tree
@@ -21,7 +21,7 @@ func newTree(cfg Config) (*Tree, error) {
 	tree := Tree{
 		pages:     map[string]*Page{},
 		templates: newTemplateSet(),
-		assets:    []string{},
+		assets:    map[string]string{},
 	}
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -46,7 +46,7 @@ func newTree(cfg Config) (*Tree, error) {
 			return err
 		}
 		if isPage {
-			tree.pages[trimmed], err = parsePage(path)
+			tree.pages[trimmed], err = parsePage(trimmed, path, cfg)
 			if err != nil {
 				return err
 			}
@@ -64,7 +64,7 @@ func newTree(cfg Config) (*Tree, error) {
 		}
 
 		if !isTemplate && !isPage {
-			tree.assets = append(tree.assets, trimmed)
+			tree.assets[trimmed] = rewritePath(cfg.FileRewrites, trimmed)
 		}
 
 		return nil

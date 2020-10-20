@@ -37,9 +37,9 @@ func renderAll(cfg Config, tree *Tree) error {
 	if err != nil {
 		return err
 	}
-	for path := range tree.pages {
+	for path, page := range tree.pages {
 
-		fsPath := cfg.output + "/" + rewritePath(cfg, path)
+		fsPath := cfg.output + "/" + page.OutputPath
 		fmt.Printf("rendering %s\n", fsPath)
 		rendered, err := render(tree, pages, path)
 		if err != nil {
@@ -55,8 +55,8 @@ func renderAll(cfg Config, tree *Tree) error {
 			return err
 		}
 	}
-	for _, path := range tree.assets {
-		dst := cfg.output + "/" + rewritePath(cfg, path)
+	for path, outputPath := range tree.assets {
+		dst := cfg.output + "/" + outputPath
 		src := cfg.root() + "/" + path
 		fmt.Printf("copying %s to %s\n", src, dst)
 		err := copyFile(src, dst)

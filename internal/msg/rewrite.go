@@ -11,8 +11,8 @@ type Rewrite struct {
 	r    *regexp.Regexp
 }
 
-// parse parses the regexp in From
-func (rr *Rewrite) parse() (err error) {
+// compiles compiles the regexp in From
+func (rr *Rewrite) compile() (err error) {
 	rr.r, err = regexp.Compile(rr.From)
 	return
 }
@@ -23,9 +23,20 @@ func (rr *Rewrite) rewrite(path string) string {
 }
 
 // rewritePath rewrites path using all rules in cfg
-func rewritePath(cfg Config, path string) string {
-	for _, r := range cfg.Rewrites {
+func rewritePath(list []*Rewrite, path string) string {
+	for _, r := range list {
 		path = r.rewrite(path)
 	}
 	return path
+}
+
+func compileRewrites(list []*Rewrite) error {
+	var err error
+	for _, r := range list {
+		err = r.compile()
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
