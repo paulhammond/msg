@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io/ioutil"
 
+	"github.com/imdario/mergo"
 	"github.com/yuin/goldmark"
 	meta "github.com/yuin/goldmark-meta"
 	"github.com/yuin/goldmark/parser"
@@ -37,16 +38,27 @@ func parsePage(path, fspath string, cfg Config) (*Page, error) {
 	if err := md.Convert(source, &buf, parser.WithContext(context)); err != nil {
 		return nil, err
 	}
-	metadata := meta.Get(context)
+	goldmarkMeta := meta.Get(context)
 
-	outputPath := rewritePath(cfg.FileRewrites, path)
+	metadata := make(Metadata, len(goldmarkMeta))
+	for k, v := range goldmarkMeta {
+		metadata[k] = v
+	}
+	err = mergo.Merge(&metadata, cfg.Defaults)
+	if err != nil {
+		return nil, err
+	}
+
+	outputPath := metadata.string("file", rewritePath(cfg.FileRewrites, path))
+	urlPath := metadata.string("path", rewritePath(cfg.URLRewrites, outputPath))
+
 	return &Page{
 		Metadata:   metadata,
 		Rendered:   buf.String(),
 		Source:     string(source),
 		SourcePath: path,
 		OutputPath: outputPath,
-		Path:       rewritePath(cfg.URLRewrites, outputPath),
+		Path:       urlPath,
 	}, nil
 
 }
@@ -55,12 +67,12 @@ func parsePage(path, fspath string, cfg Config) (*Page, error) {
 type Metadata map[string]interface{}
 
 // string is a convienience for fetching a string from metadata
-func (m Metadata) string(key string) string {
+func (m Metadata) string(key, fallback string) string {
 	v := m[key]
 	switch t := v.(type) {
 	case string:
 		return t
 	default:
-		return ""
+		return fallback
 	}
 }

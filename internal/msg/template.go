@@ -6,7 +6,6 @@ import (
 	"html/template"
 	"io/ioutil"
 
-	"github.com/imdario/mergo"
 	"github.com/paulhammond/msg/internal/tmpl"
 )
 
@@ -42,15 +41,10 @@ func makePageVars(cfg Config, tree *Tree) (map[string]tmplv, error) {
 	var pages = make(map[string]tmplv, len(tree.pages))
 	for path, page := range tree.pages {
 
-		m := make(Metadata, len(page.Metadata))
+		m := make(tmplv, len(page.Metadata))
 		for k, v := range page.Metadata {
 			m[k] = v
 		}
-		err := mergo.Merge(&m, cfg.Defaults)
-		if err != nil {
-			return nil, err
-		}
-
 		m["contents"] = template.HTML(page.Rendered)
 		m["source"] = page.Source
 		m["path"] = page.Path
