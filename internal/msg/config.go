@@ -29,8 +29,14 @@ func parseConfig(cfgPath string, output string) (Config, error) {
 		Templates: []string{"**/*.tmpl"},
 		Pages:     []string{"**/*.md"},
 		Ignore:    []string{},
-		output:    output,
-		cfgPath:   cfgPath,
+		FileRewrites: []*Rewrite{
+			{From: ".md$", To: ".html"},
+		},
+		URLRewrites: []*Rewrite{
+			{From: "(^|/)index.html", To: "/"},
+		},
+		output:  output,
+		cfgPath: cfgPath,
 	}
 
 	source, err := ioutil.ReadFile(cfgPath)
