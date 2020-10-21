@@ -18,6 +18,7 @@ type Config struct {
 	FileRewrites []*Rewrite `yaml:"file_rewrites"`
 	URLRewrites  []*Rewrite `yaml:"url_rewrites"`
 	Defaults     Metadata   `yaml:"defaults"`
+	Metadata     Metadata   `yaml:"metadata"`
 	output       string
 	cfgPath      string
 }

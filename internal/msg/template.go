@@ -61,10 +61,11 @@ func render(tree *Tree, pages map[string]tmplv, path string) ([]byte, error) {
 		return nil, errors.New("not found")
 	}
 
+	site := tmplv(tree.metadata)
+	site["pages"] = pages
+
 	vars := tmplv{
-		"site": tmplv{
-			"pages": pages,
-		},
+		"site": site,
 		"page": page,
 	}
 

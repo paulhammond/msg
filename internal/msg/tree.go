@@ -13,6 +13,7 @@ type Tree struct {
 	pages     map[string]*Page
 	templates templateSet
 	assets    map[string]string
+	metadata  Metadata
 }
 
 // newTree parses all files referenced in cfg and creates a Tree
@@ -22,6 +23,7 @@ func newTree(cfg Config) (*Tree, error) {
 		pages:     map[string]*Page{},
 		templates: newTemplateSet(),
 		assets:    map[string]string{},
+		metadata:  cfg.Metadata,
 	}
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
