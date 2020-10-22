@@ -8,6 +8,7 @@ import (
 	"github.com/yuin/goldmark"
 	meta "github.com/yuin/goldmark-meta"
 	"github.com/yuin/goldmark/parser"
+	"github.com/yuin/goldmark/renderer/html"
 )
 
 // Page represents a single page
@@ -28,6 +29,9 @@ func parsePage(path, fspath string, cfg Config) (*Page, error) {
 	}
 
 	md := goldmark.New(
+		goldmark.WithRendererOptions(
+			html.WithUnsafe(),
+		),
 		goldmark.WithExtensions(
 			meta.Meta,
 		),
