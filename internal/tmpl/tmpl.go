@@ -6,6 +6,7 @@ import "html/template"
 func Map() template.FuncMap {
 	return template.FuncMap{
 		"date_format": DateFormat,
+		"escape_html": EscapeHTML,
 		"filter":      Filter,
 		"now":         Now,
 		"sort":        Sort,
