@@ -3,6 +3,7 @@ package msg
 import (
 	"bytes"
 	"io/ioutil"
+	"strings"
 
 	"github.com/imdario/mergo"
 	"github.com/yuin/goldmark"
@@ -55,6 +56,10 @@ func parsePage(path, fspath string, cfg Config) (*Page, error) {
 
 	outputPath := metadata.string("file", rewritePath(cfg.FileRewrites, path))
 	urlPath := metadata.string("path", rewritePath(cfg.URLRewrites, outputPath))
+
+	if !strings.HasPrefix(urlPath, "/") {
+		urlPath = "/" + urlPath
+	}
 
 	return &Page{
 		Metadata:   metadata,
