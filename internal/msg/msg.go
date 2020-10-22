@@ -69,6 +69,11 @@ func renderAll(cfg Config, tree *Tree) error {
 
 // copyFile copies the file at src to dst, making any needed directories
 func copyFile(src string, dst string) (err error) {
+	err = os.MkdirAll(filepath.Dir(dst), 0755)
+	if err != nil {
+		return err
+	}
+
 	w, err := os.OpenFile(dst, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		return err
@@ -79,11 +84,6 @@ func copyFile(src string, dst string) (err error) {
 			err = e
 		}
 	}()
-
-	err = os.MkdirAll(filepath.Dir(src), 0755)
-	if err != nil {
-		return err
-	}
 
 	r, err := os.Open(src)
 	if err != nil {
