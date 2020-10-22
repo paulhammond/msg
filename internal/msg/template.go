@@ -45,7 +45,7 @@ func makePageVars(cfg Config, tree *Tree) (map[string]tmplv, error) {
 		for k, v := range page.Metadata {
 			m[k] = v
 		}
-		m["contents"] = template.HTML(page.Rendered)
+		m["content"] = template.HTML(page.Rendered)
 		m["source"] = page.Source
 		m["path"] = page.Path
 		pages[path] = tmplv(m)
