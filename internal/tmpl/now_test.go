@@ -11,16 +11,10 @@ func TestNow(t *testing.T) {
 		return t1
 	}
 
-	testFunc(t, "Now", Now, testCases{
-		{
-			name: "no arguments",
-			in:   []interface{}{},
-			out:  t1,
-		},
-		{
-			name: "more arguments",
-			in:   []interface{}{"foo"},
-			err:  "too many arguments",
-		},
-	})
+	got := Now()
+
+	if got != t1 {
+		t.Errorf("Now() unexpected value:\n got:%+v\n exp: %+v", got, t1)
+
+	}
 }
