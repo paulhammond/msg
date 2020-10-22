@@ -34,7 +34,7 @@ func Filter(args ...reflect.Value) (interface{}, error) {
 		return nil, err
 	}
 
-	// check sortkey
+	// check keyv
 	if keyv.Kind() != reflect.String {
 		return nil, errors.New("key is not a string")
 	}
