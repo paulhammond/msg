@@ -32,15 +32,13 @@ func testFunc(t *testing.T, fname string, f tmplFunc, tests testCases) {
 		if tt.err != "" {
 			if err == nil || err.Error() != tt.err {
 				t.Errorf("%s(%s) unexpected error:\n got:%+v\n exp:%s", fname, tt.name, err, tt.err)
-			}
-			if got != nil {
+			} else if got != nil {
 				t.Errorf("%s(%s) unexpected value:\n got:%+v\n exp: nil", fname, tt.name, got)
 			}
 		} else {
 			if err != nil {
 				t.Errorf("%s(%s) unexpected error:\n got:%+v\n exp: nil", fname, tt.name, err)
-			}
-			if !reflect.DeepEqual(got, tt.out) {
+			} else if !reflect.DeepEqual(got, tt.out) {
 				t.Errorf("%s(%s) unexpected value:\n got:%+v\n exp:%+v", fname, tt.name, got, tt.out)
 			}
 		}
