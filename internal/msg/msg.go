@@ -10,6 +10,10 @@ import (
 
 var version string = "dev"
 
+func Version() string {
+	return version
+}
+
 // Run runs msg according to the config file at configPath and saves the output
 // in outputDir
 func Run(configPath, outputDir string) error {
