@@ -1,0 +1,10 @@
+linters:
+  enable:
+    - golint
+    - maligned
+    - gochecknoinits
+issues:
+  exclude-use-default: false
+linters-settings:
+  errcheck:
+    ignore: 'fmt:.*'
