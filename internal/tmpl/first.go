@@ -38,8 +38,8 @@ func First(args ...reflect.Value) (interface{}, error) {
 	if count > listv.Len() {
 		count = listv.Len()
 	}
-	if count < 1 {
-		return nil, errors.New("count must be greater than zero")
+	if count < 0 {
+		return nil, errors.New("count must be positive")
 	}
 
 	// we tested the list type above

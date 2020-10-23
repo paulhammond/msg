@@ -30,7 +30,17 @@ func TestFirst(t *testing.T) {
 		{
 			name: "zero count",
 			in:   []interface{}{0, list},
-			err:  "count must be greater than zero",
+			out:  []int{},
+		},
+		{
+			name: "empty list with a count",
+			in:   []interface{}{1, []int{}},
+			out:  []int{},
+		},
+		{
+			name: "empty list with zero count",
+			in:   []interface{}{0, []int{}},
+			out:  []int{},
 		},
 		{
 			name: "bad list",
