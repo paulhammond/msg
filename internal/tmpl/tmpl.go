@@ -9,10 +9,10 @@ func Map() template.FuncMap {
 		"date_format":   DateFormat,
 		"escape_html":   EscapeHTML,
 		"filter":        Filter,
+		"first":         First,
 		"last":          Last,
 		"now":           Now,
 		"sort":          Sort,
-		"first":         First,
 		"xmldecl":       XMLDecl,
 	}
 }
