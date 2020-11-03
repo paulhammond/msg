@@ -11,8 +11,8 @@ import (
 // A Tree represents the parsed contents of the input directory
 type Tree struct {
 	pages     map[string]*Page
-	templates templateSet
-	assets    map[string]string
+	templates *templateSet
+	assets    map[string]*asset
 	metadata  Metadata
 }
 
@@ -22,9 +22,10 @@ func newTree(cfg Config) (*Tree, error) {
 	tree := Tree{
 		pages:     map[string]*Page{},
 		templates: newTemplateSet(),
-		assets:    map[string]string{},
+		assets:    map[string]*asset{},
 		metadata:  cfg.Metadata,
 	}
+
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -66,7 +67,7 @@ func newTree(cfg Config) (*Tree, error) {
 		}
 
 		if !isTemplate && !isPage {
-			tree.assets[trimmed] = rewritePath(cfg.FileRewrites, trimmed)
+			tree.assets[trimmed] = newAsset(trimmed, path, cfg)
 		}
 
 		return nil

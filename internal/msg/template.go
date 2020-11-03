@@ -13,10 +13,11 @@ type templateSet struct {
 	*template.Template
 }
 
-func newTemplateSet() templateSet {
+func newTemplateSet() *templateSet {
 	set := templateSet{template.New("")}
+	set.Funcs(renderContext{}.funcs())
 	set.Funcs(tmpl.Map())
-	return set
+	return &set
 }
 
 func (t *templateSet) Parse(path, fsPath string) error {
@@ -69,6 +70,10 @@ func render(tree *Tree, pages map[string]tmplv, path string) ([]byte, error) {
 		"page": page,
 	}
 
+	ctx := renderContext{
+		tree: tree,
+	}
+
 	var templateName string
 	switch t := page["template"].(type) {
 	case string:
@@ -77,8 +82,15 @@ func render(tree *Tree, pages map[string]tmplv, path string) ([]byte, error) {
 		return nil, errors.New("no template defined")
 	}
 
+	cloned, err := tree.templates.Clone()
+	if err != nil {
+		return nil, err
+	}
+	cloned.Funcs(ctx.funcs())
+	cloned.Funcs(tmpl.Map())
+
 	var buf bytes.Buffer
-	err := tree.templates.ExecuteTemplate(&buf, templateName, vars)
+	err = cloned.ExecuteTemplate(&buf, templateName, vars)
 
 	return buf.Bytes(), err
 }

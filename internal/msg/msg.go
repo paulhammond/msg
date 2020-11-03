@@ -59,8 +59,8 @@ func renderAll(cfg Config, tree *Tree) error {
 			return err
 		}
 	}
-	for path, outputPath := range tree.assets {
-		dst := cfg.output + "/" + outputPath
+	for path, asset := range tree.assets {
+		dst := cfg.output + "/" + asset.outputPath
 		src := cfg.root() + "/" + path
 		fmt.Printf("copying %s to %s\n", src, dst)
 		err := copyFile(src, dst)
