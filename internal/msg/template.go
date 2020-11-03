@@ -71,7 +71,9 @@ func render(tree *Tree, pages map[string]tmplv, path string) ([]byte, error) {
 	}
 
 	ctx := renderContext{
-		tree: tree,
+		Tree: tree,
+		Site: site,
+		Page: page,
 	}
 
 	var templateName string
