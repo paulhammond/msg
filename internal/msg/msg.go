@@ -8,8 +8,10 @@ import (
 	"path/filepath"
 )
 
+// this is overridden in build scripts using the -X ldflag
 var version string = "dev"
 
+// Version returns the version of msg, which will either be "dev" or "vn.n.n"
 func Version() string {
 	return version
 }
